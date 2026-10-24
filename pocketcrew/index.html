@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pocket Crew — Trail & Ultra Race Planner for iPhone</title>
+<meta name="description" content="Import the course GPX, get an ETA and cutoff at every aid station, a fuel plan from hourly targets, and a race-day screen that shows only what's next. Offline. No account. No data collected.">
+<link rel="canonical" href="https://sliekery.github.io/apps/pocketcrew/">
+<meta property="og:title" content="Pocket Crew — Trail & Ultra Race Planner">
+<meta property="og:description" content="Every aid station, ETA and cutoff on one page. Works with no signal. No account, no data collected.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sliekery.github.io/apps/pocketcrew/">
+<meta property="og:image" content="https://sliekery.github.io/apps/pocketcrew/shots/plan.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="apple-itunes-app" content="app-id=6757974111">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Pocket Crew",
+  "operatingSystem": "iOS 17.0 or later",
+  "applicationCategory": "HealthApplication",
+  "description": "Offline race planner for trail and ultramarathon runners: aid station ETAs, cutoffs, fuel plan, race-day live screen.",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "url": "https://apps.apple.com/app/id6757974111",
+  "author": {"@type": "Person", "name": "Tom Graulus"}
+}
+</script>
+<style>
+:root{
+  --bg:#FBF8F2; --surface:#F3EEE3; --ink:#1E1B16; --ink-2:#4A453C; --muted:#8A8378; --line:#DDD6C8;
+  --gold:#E6A600; --gold-ink:#1E1B16; --green:#2D7A5A; --coral:#C8471B;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#171512; --surface:#211E19; --ink:#F2EDE3; --ink-2:#CFC7B8; --muted:#948C7E; --line:#3A352D; --gold:#FFB800; --gold-ink:#171512; --green:#4AAF82; --coral:#FF7A4D; }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 "Source Sans 3",-apple-system,"Helvetica Neue",Arial,sans-serif;padding-inline:20px;padding-block:0 64px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif;line-height:1.05;margin:0;text-wrap:balance}
+a{color:var(--green)}
+.wrap{max-width:980px;margin:0 auto}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:.02em;text-decoration:none;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--gold-ink);font-weight:600;text-decoration:none;padding:12px 20px;border-radius:999px;font-size:1rem}
+.btn:hover{filter:brightness(1.05)}
+.btn.small{padding:8px 14px;font-size:.9rem}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:36px 0 48px}
+.hero h1{font-size:3.4rem;font-weight:700;letter-spacing:-.01em}
+.hero p.lede{font-size:1.2rem;color:var(--ink-2);max-width:34ch;margin:18px 0 24px}
+.hero .cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.hero .cta small{color:var(--muted)}
+.eyebrow{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:.85rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+/* elevation card that "is" the app */
+.plan{background:var(--surface);border-radius:16px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.plan .row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.plan .row:last-child{border-bottom:0}
+.plan .name{font-weight:600}
+.plan .meta{color:var(--muted);font-size:.9rem;margin-left:8px}
+.plan .eta{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.35rem}
+.plan .buf{font-size:.8rem;font-weight:600;color:var(--green);margin-left:8px}
+.plan svg{display:block;width:100%;height:auto;margin-bottom:8px}
+section{padding:36px 0;border-top:1px solid var(--line)}
+section h2{font-size:2rem;font-weight:600;text-transform:uppercase;letter-spacing:.02em;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:20px}
+.grid h3{font-size:1.25rem;font-weight:600;margin-bottom:6px;color:var(--ink)}
+.grid p{margin:0;color:var(--ink-2);max-width:32ch}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.shots figure{margin:0}
+.shots img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);background:var(--surface);aspect-ratio:1206/2622}
+.shots figcaption{font-size:.9rem;color:var(--ink-2);margin-top:8px;text-align:center}
+.guide p{max-width:68ch;color:var(--ink-2)}
+.guide ol{max-width:68ch;color:var(--ink-2);padding-left:20px}
+.guide li{margin:8px 0}
+.privacy{background:var(--surface);border-radius:12px;padding:20px 22px;max-width:68ch}
+footer{padding-top:28px;color:var(--muted);font-size:.9rem;display:flex;gap:18px;flex-wrap:wrap}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:28px;padding-top:12px}
+  .hero h1{font-size:2.5rem}
+  .grid,.shots{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <a class="brand" href="#">POCKET CREW</a>
+  <a class="btn small" href="https://apps.apple.com/app/id6757974111">Get it on the App Store</a>
+</nav>
+
+<div class="hero">
+  <div>
+    <div class="eyebrow">For trail &amp; ultra runners · iPhone</div>
+    <h1>Every aid station, ETA and cutoff on one page.</h1>
+    <p class="lede">Import the course GPX, set one goal time, and Pocket Crew turns it into a plan you can run — then shows you only what's next on race day. Works with no signal.</p>
+    <div class="cta">
+      <a class="btn" href="https://apps.apple.com/app/id6757974111"> Download free</a>
+      <small>iOS 17+ · No account · No data collected</small>
+    </div>
+  </div>
+  <div class="plan" aria-label="Example race plan">
+    <div class="eyebrow">Trail de Chimay · 43 km · +1 028 m</div>
+    <svg viewBox="0 0 400 120" role="img" aria-label="Elevation profile with three aid stations">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E6A600" stop-opacity=".55"/><stop offset="1" stop-color="#E6A600" stop-opacity=".05"/></linearGradient></defs>
+      <path d="M0 100 L30 92 L60 70 L90 78 L120 40 L150 55 L180 48 L210 72 L240 38 L270 52 L300 30 L330 60 L360 45 L400 88 L400 120 L0 120 Z" fill="url(#g)"/>
+      <path d="M0 100 L30 92 L60 70 L90 78 L120 40 L150 55 L180 48 L210 72 L240 38 L270 52 L300 30 L330 60 L360 45 L400 88" fill="none" stroke="#E6A600" stroke-width="2.5"/>
+      <g fill="#2D7A5A"><circle cx="102" cy="66" r="4.5"/><circle cx="186" cy="49" r="4.5"/><circle cx="316" cy="46" r="4.5"/></g>
+      <circle cx="400" cy="88" r="4.5" fill="#C8471B"/>
+    </svg>
+    <div class="row"><span><span class="name">One</span><span class="meta">11.0 km · 5 min stop</span></span><span><span class="eta">07:13</span><span class="buf">+1h20</span></span></div>
+    <div class="row"><span><span class="name">Two</span><span class="meta">20.0 km · 5 min stop</span></span><span><span class="eta">08:14</span><span class="buf">+1h05</span></span></div>
+    <div class="row"><span><span class="name">Three</span><span class="meta">34.0 km · 5 min stop</span></span><span><span class="eta">09:54</span><span class="buf">+0h40</span></span></div>
+    <div class="row"><span><span class="name">Finish</span><span class="meta">43.0 km</span></span><span><span class="eta">10:59</span><span class="buf" style="color:var(--coral)">goal 11:00</span></span></div>
+  </div>
+</div>
+
+<section>
+  <h2>Built for the distance</h2>
+  <div class="grid">
+    <div><h3>Plan</h3><p>GPX in, plan out. Trail-aware pacing adjusts every leg for grade, altitude, fatigue, night and heat. Cutoffs are clock times, with your buffer at each station.</p></div>
+    <div><h3>Fuel</h3><p>Hourly carb, fluid and sodium targets become a simple eating plan from a library of food you've actually tested in training.</p></div>
+    <div><h3>Race day</h3><p>Map-first live screen, one-tap arrive / leave, station timer, GPS auto-arrival, voice guidance, and a Live Activity on the lock screen.</p></div>
+    <div><h3>Train</h3><p>Plan long runs with checkpoints and stash points, or press Record and go. Splits, elevation, heart rate, best efforts, a two-minute debrief.</p></div>
+    <div><h3>Review</h3><p>Planned vs actual, time spent at aid stations, finish vs goal. Export a paced GPX for your watch or a pace card for your crew.</p></div>
+    <div><h3>Offline &amp; private</h3><p>Everything works with no signal. No account, no tracking. Your data stays on your phone, or in your own iCloud if you turn it on.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Screens</h2>
+  <div class="shots">
+    <figure><img onerror="this.parentElement.style.display='none'" src="shots/plan.png" alt="Race plan with aid stations, ETAs and cutoffs"><figcaption>Every aid station, ETA and cutoff on one page</figcaption></figure>
+    <figure><img onerror="this.parentElement.style.display='none'" src="shots/race.png" alt="Race-day live screen showing the next station"><figcaption>Race day: only what's next</figcaption></figure>
+    <figure><img onerror="this.parentElement.style.display='none'" src="shots/fuel.png" alt="Fuel plan built from hourly targets"><figcaption>Fuel plan from hourly targets</figcaption></figure>
+  </div>
+</section>
+
+<section class="guide" id="cutoffs">
+  <h2>How to plan cutoffs for your first 100K</h2>
+  <p>Most cutoff DNFs are not fitness problems. They are arithmetic problems at 3 a.m. Here is the method Pocket Crew automates, in case you want to do it on paper first.</p>
+  <ol>
+    <li><strong>Get the real numbers.</strong> From the race roadbook: distance and cumulative climb to every aid station, and the cutoff at each one as a clock time. Cutoffs are set by the organiser and do not move if you start late.</li>
+    <li><strong>Decide one goal time, not a pace.</strong> Ultra pace is meaningless as a single figure; a goal finish is what you can hold in your head. Everything else is derived.</li>
+    <li><strong>Distribute that time by effort, not distance.</strong> A 10 km leg with 800 m of climb takes roughly twice as long as a flat one. Use grade-adjusted pacing (Minetti / ultraPacer style) or, on paper, add one minute per 10 m of climb to your flat pace.</li>
+    <li><strong>Add stop time and a fatigue slope.</strong> Five minutes per aid station is realistic if you are organised; twelve if you are not. Expect the second half to run 10–15 % slower than the first.</li>
+    <li><strong>Now compare every ETA to its cutoff.</strong> The buffer that matters is the smallest one, usually two-thirds of the way in. If it is under 30 minutes, your goal time is a wish.</li>
+    <li><strong>On race day, only look at the next station.</strong> Its ETA, its cutoff, and what you need to eat before it. The rest is noise until you get there.</li>
+  </ol>
+  <p><a class="btn" href="https://apps.apple.com/app/id6757974111">Do this in 30 seconds with Pocket Crew</a></p>
+</section>
+
+<section>
+  <h2 id="privacy">Privacy</h2>
+  <div class="privacy">
+    <p style="margin:0 0 8px"><strong>Pocket Crew collects no data.</strong> There is no account, no analytics SDK and no server. Race plans, training runs, fuel and gear libraries live in files on your iPhone. If you enable iCloud sync, they are copied to your own iCloud Drive and nowhere else. Location is used only while you are tracking a run, and only on the device.</p>
+    <p style="margin:0;color:var(--muted)">Questions: <a href="mailto:gentlepace.app@gmail.com">gentlepace.app@gmail.com</a></p>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Tom Graulus · Belgium</span>
+  <a href="https://apps.apple.com/app/id6757974111">App Store</a>
+  <a href="mailto:gentlepace.app@gmail.com">Contact</a>
+  <a href="#cutoffs">Cutoff guide</a>
+</footer>
+</div>
+</body>
+</html>
