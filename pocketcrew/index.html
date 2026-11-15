@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pocket Crew: Race Pace Planner for Trail & Ultra Runners</title>
-<meta name="description" content="Import the course GPX, get an ETA and cutoff at every aid station, a fuel plan from hourly targets, and a race-day screen that shows only what's next. Offline. No account. No data collected.">
+<title>Pocket Crew: Trail &amp; Ultra Pace Calculator and Race Planner</title>
+<meta name="description" content="Free trail and ultra pace calculator for iPhone. Import the course GPX, get an ETA and cutoff at every aid station, a fuel plan from hourly targets, and a race-day screen that shows only what's next. Offline. No account. No data collected.">
 <link rel="canonical" href="https://sliekery.github.io/apps/pocketcrew/">
-<meta property="og:title" content="Pocket Crew — Trail & Ultra Race Planner">
+<meta property="og:title" content="Pocket Crew — Trail &amp; Ultra Pace Calculator">
 <meta property="og:description" content="Every aid station, ETA and cutoff on one page. Works with no signal. No account, no data collected.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sliekery.github.io/apps/pocketcrew/">
@@ -22,7 +22,7 @@
   "name": "Pocket Crew",
   "operatingSystem": "iOS 17.0 or later",
   "applicationCategory": "HealthApplication",
-  "description": "Offline race planner for trail and ultramarathon runners: aid station ETAs, cutoffs, fuel plan, race-day live screen.",
+  "description": "Offline trail and ultramarathon pace calculator and race planner: aid station ETAs, cutoffs, fuel plan, watch export, race-day live screen.",
   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
   "url": "https://apps.apple.com/app/id6757974111",
   "author": {"@type": "Person", "name": "Tom Graulus"}
@@ -69,7 +69,7 @@ section h2{font-size:2rem;font-weight:600;text-transform:uppercase;letter-spacin
 .grid p{margin:0;color:var(--ink-2);max-width:32ch}
 .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
 .shots figure{margin:0}
-.shots img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);background:var(--surface);aspect-ratio:1206/2622}
+.shots img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);background:var(--surface);aspect-ratio:1320/2868}
 .shots figcaption{font-size:.9rem;color:var(--ink-2);margin-top:8px;text-align:center}
 .guide p{max-width:68ch;color:var(--ink-2)}
 .guide ol{max-width:68ch;color:var(--ink-2);padding-left:20px}
@@ -94,7 +94,7 @@ footer{padding-top:28px;color:var(--muted);font-size:.9rem;display:flex;gap:18px
   <div>
     <div class="eyebrow">For trail &amp; ultra runners · iPhone</div>
     <h1>Every aid station, ETA and cutoff on one page.</h1>
-    <p class="lede">Import the course GPX, set one goal time, and Pocket Crew turns it into a plan you can run — then shows you only what's next on race day. Works with no signal.</p>
+    <p class="lede">Import the course GPX, set one goal time, and Pocket Crew's trail pace calculator turns it into a plan you can run — then shows you only what's next on race day. Works with no signal.</p>
     <div class="cta">
       <a class="btn" href="https://apps.apple.com/app/id6757974111"> Download free</a>
       <small>iOS 17+ · No account · No data collected · English, Français, Español, Italiano, Deutsch, Nederlands</small>
@@ -123,7 +123,7 @@ footer{padding-top:28px;color:var(--muted);font-size:.9rem;display:flex;gap:18px
     <div><h3>Fuel</h3><p>Hourly carb, fluid and sodium targets become a simple eating plan from a library of food you've actually tested in training.</p></div>
     <div><h3>Race day</h3><p>Map-first live screen, one-tap arrive / leave, station timer, GPS auto-arrival, voice guidance, and a Live Activity on the lock screen.</p></div>
     <div><h3>Train</h3><p>Plan long runs with checkpoints and stash points, or press Record and go. Splits, elevation, heart rate, best efforts, a two-minute debrief.</p></div>
-    <div><h3>Review</h3><p>Planned vs actual, time spent at aid stations, finish vs goal. Export a paced GPX for your watch or a pace card for your crew.</p></div>
+    <div><h3>Watch &amp; review</h3><p>Export the course for Garmin, COROS or Suunto with every station named by its arrival time. After the race: planned vs actual, aid station time, and the flat pace to plan your next one with.</p></div>
     <div><h3>Offline &amp; private</h3><p>Everything works with no signal. No account, no tracking. Your data stays on your phone, or in your own iCloud if you turn it on. Every feature is free; an optional one-time Buy Me a Gel supports the developer.</p></div>
   </div>
 </section>
@@ -131,9 +131,12 @@ footer{padding-top:28px;color:var(--muted);font-size:.9rem;display:flex;gap:18px
 <section>
   <h2>Screens</h2>
   <div class="shots">
-    <figure><img onerror="this.parentElement.style.display='none'" src="shots/plan.png" alt="Race plan with aid stations, ETAs and cutoffs"><figcaption>Every aid station, ETA and cutoff on one page</figcaption></figure>
-    <figure><img onerror="this.parentElement.style.display='none'" src="shots/race.png" alt="Race-day live screen showing the next station"><figcaption>Race day: only what's next</figcaption></figure>
-    <figure><img onerror="this.parentElement.style.display='none'" src="shots/fuel.png" alt="Fuel plan built from hourly targets"><figcaption>Fuel plan from hourly targets</figcaption></figure>
+    <figure><img loading="lazy" onerror="this.parentElement.style.display='none'" src="shots/plan.png" alt="Race plan with aid stations, ETAs and cutoffs"><figcaption>Your GPX becomes a pace plan with cutoffs</figcaption></figure>
+    <figure><img loading="lazy" onerror="this.parentElement.style.display='none'" src="shots/pace.png" alt="Trail pacing with flat pace, finish time and late-race slowdown"><figcaption>Trail pace calculator: every climb counted</figcaption></figure>
+    <figure><img loading="lazy" onerror="this.parentElement.style.display='none'" src="shots/race.png" alt="Race-day live screen showing the next station"><figcaption>Race day: only what's next</figcaption></figure>
+    <figure><img loading="lazy" onerror="this.parentElement.style.display='none'" src="shots/fuel.png" alt="Fuel plan built from hourly targets"><figcaption>Fuel plan from hourly targets</figcaption></figure>
+    <figure><img loading="lazy" onerror="this.parentElement.style.display='none'" src="shots/lab.png" alt="Pace Lab finish time estimate"><figcaption>Finish time for any race in seconds</figcaption></figure>
+    <figure><img loading="lazy" onerror="this.parentElement.style.display='none'" src="shots/run.png" alt="Finished training run with map and stats"><figcaption>Training runs: Record and go</figcaption></figure>
   </div>
 </section>
 
