@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Crew Sheet · Pocket Crew</title>
+<meta name="description" content="A runner's crew sheet: arrival times, cutoffs and what to have ready at each station.">
+<meta name="theme-color" content="#F7F4EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151413" media="(prefers-color-scheme: dark)">
+<style>
+:root {
+  --bg: #F7F4EE; --fg: #1C1B19; --fg2: #5F5A52; --fg3: #8A847A; --line: #E2DDD3;
+  --gold: #E3A400; --onGold: #1C1B19; --green: #2E6B4F; --coral: #C2503A; --chip: #ECE7DD;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #151413; --fg: #F3F0EA; --fg2: #B5AFA5; --fg3: #8A847A; --line: #2D2B28;
+          --gold: #F0B429; --onGold: #1C1B19; --green: #5CB287; --coral: #E57A63; --chip: #24221F; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 17px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; }
+main { max-width: 640px; margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) 16px 48px; }
+h1 { font-size: 28px; line-height: 1.15; margin: 0 0 4px; letter-spacing: -0.01em; }
+.meta { color: var(--fg2); font-size: 15px; }
+.num { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.status { margin: 20px 0 8px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.status .big { font-size: 22px; font-weight: 700; }
+.status .ahead { color: var(--green); } .status .behind { color: var(--coral); }
+.status .sub { color: var(--fg2); font-size: 15px; margin-top: 2px; }
+.stale { color: var(--coral); }
+.bar { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 4px; gap: 12px; }
+.bar h2 { font-size: 20px; margin: 0; }
+.toggle { font: inherit; font-size: 15px; color: var(--fg2); background: var(--chip); border: 0;
+  border-radius: 999px; padding: 8px 14px; min-height: 36px; cursor: pointer; }
+.toggle[aria-pressed="true"] { color: var(--fg); font-weight: 600; }
+ol { list-style: none; margin: 0; padding: 0; }
+li.st { padding: 14px 0 14px 14px; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
+li.st.next { border-left-color: var(--gold); }
+li.st.done { color: var(--fg3); }
+li.st.done .when { color: var(--fg3); }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.name { font-weight: 600; font-size: 18px; }
+.when { font-size: 22px; white-space: nowrap; }
+.line2 { display: flex; justify-content: space-between; gap: 12px; color: var(--fg2); font-size: 15px; margin-top: 2px; }
+.cut { white-space: nowrap; }
+.cut.tight { color: var(--coral); font-weight: 600; }
+.tags { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 13px; background: var(--chip); color: var(--fg2); border-radius: 6px; padding: 2px 8px; }
+.tag.next { background: var(--gold); color: var(--onGold); font-weight: 600; }
+dl { margin: 10px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 15px; }
+dt { color: var(--fg2); }
+dd { margin: 0; white-space: pre-line; }
+.empty { color: var(--fg2); padding: 24px 0; }
+footer { margin-top: 32px; color: var(--fg3); font-size: 13px; line-height: 1.6; }
+footer a { color: var(--fg2); }
+.cta { display: inline-block; margin-top: 16px; background: var(--gold); color: var(--onGold); font-weight: 600;
+  text-decoration: none; border-radius: 12px; padding: 12px 18px; }
+</style>
+</head>
+<body>
+<main id="app"><p class="empty">…</p></main>
+<script>
+"use strict";
+const STORE = "https://apps.apple.com/app/id6757974111";
+const T = {
+  en: { arrivedWord: "arrived", crewOnly: "Crew stations", all: "All stations", stations: "Stations", start: "Start", finish: "Finish",
+        eta: "ETA", window: "Arrives between {a} and {b}", cutoff: "cutoff {t}", margin: "{m} margin", crew: "Crew", bag: "Drop bag",
+        stop: "{m} min stop", next: "Next", arrived: "arrived {t}", eat: "Eat here", carry: "Carry out", gear: "Gear", notes: "Notes",
+        directions: "Getting there", bagItems: "In the bag", updated: "Updated {t}", ago: "{m} min ago", hAgo: "{h} h {m} min ago",
+        ahead: "{m} ahead of plan", behind: "{m} behind plan", onPlan: "On plan", at: "Last seen at {s}, {t}",
+        started: "Started {t}", notStarted: "Planned start {t}", finished: "Finished in {d}", dnf: "Stopped the race",
+        stale: "This update is a while old. Ask the runner for a new one.", tz: "Times are in race time ({z}).",
+        shifted: "Times below are shifted by how the race is going.", none: "No crew stations in this plan; showing all stations.",
+        noData: "This page shows a runner's crew sheet. Open the link the runner sent you.", bad: "This link is incomplete. Ask the runner to send it again.",
+        old: "This browser can't open the sheet. Try Safari or Chrome.", made: "Made with Pocket Crew, a free race planner for trail and ultra runners.", getApp: "Get Pocket Crew",
+        private: "The plan lives in this link only; nothing is stored on a server.", runner: "Runner", bib: "bib {b}" },
+  nl: { arrivedWord: "aangekomen", crewOnly: "Crewposten", all: "Alle posten", stations: "Posten", start: "Start", finish: "Finish",
+        eta: "Aankomst", window: "Aankomst tussen {a} en {b}", cutoff: "cut-off {t}", margin: "{m} marge", crew: "Crew", bag: "Dropbag",
+        stop: "{m} min stop", next: "Volgende", arrived: "aangekomen {t}", eat: "Hier eten", carry: "Meenemen", gear: "Materiaal", notes: "Notities",
+        directions: "Hoe er te komen", bagItems: "In de tas", updated: "Bijgewerkt {t}", ago: "{m} min geleden", hAgo: "{h} u {m} min geleden",
+        ahead: "{m} voor op schema", behind: "{m} achter op schema", onPlan: "Op schema", at: "Laatst gezien bij {s}, {t}",
+        started: "Gestart {t}", notStarted: "Geplande start {t}", finished: "Gefinisht in {d}", dnf: "Gestopt met de wedstrijd",
+        stale: "Deze update is al wat ouder. Vraag de loper om een nieuwe.", tz: "Tijden in wedstrijdtijd ({z}).",
+        shifted: "De tijden hieronder zijn aangepast aan hoe de wedstrijd loopt.", none: "Geen crewposten in dit plan; alle posten worden getoond.",
+        noData: "Deze pagina toont het crewschema van een loper. Open de link die de loper je stuurde.", bad: "Deze link is onvolledig. Vraag de loper om hem opnieuw te sturen.",
+        old: "Deze browser kan het schema niet openen. Probeer Safari of Chrome.", made: "Gemaakt met Pocket Crew, een gratis wedstrijdplanner voor trail- en ultralopers.", getApp: "Download Pocket Crew",
+        private: "Het plan zit alleen in deze link; niets wordt op een server bewaard.", runner: "Loper", bib: "nr. {b}" },
+  fr: { arrivedWord: "passé", crewOnly: "Points assistance", all: "Tous les points", stations: "Points", start: "Départ", finish: "Arrivée",
+        eta: "Passage", window: "Passage entre {a} et {b}", cutoff: "barrière {t}", margin: "{m} de marge", crew: "Assistance", bag: "Sac d’allègement",
+        stop: "arrêt {m} min", next: "Prochain", arrived: "passé à {t}", eat: "À manger ici", carry: "À emporter", gear: "Matériel", notes: "Notes",
+        directions: "Accès", bagItems: "Dans le sac", updated: "Mis à jour {t}", ago: "il y a {m} min", hAgo: "il y a {h} h {m} min",
+        ahead: "{m} d’avance sur le plan", behind: "{m} de retard sur le plan", onPlan: "Dans le plan", at: "Dernier passage : {s}, {t}",
+        started: "Parti à {t}", notStarted: "Départ prévu {t}", finished: "Arrivé en {d}", dnf: "A abandonné",
+        stale: "Cette mise à jour date un peu. Demandez-en une nouvelle au coureur.", tz: "Heures de la course ({z}).",
+        shifted: "Les heures ci-dessous tiennent compte du déroulement de la course.", none: "Aucun point d’assistance dans ce plan ; tous les points sont affichés.",
+        noData: "Cette page affiche la feuille d’assistance d’un coureur. Ouvrez le lien qu’il vous a envoyé.", bad: "Ce lien est incomplet. Demandez au coureur de le renvoyer.",
+        old: "Ce navigateur ne peut pas ouvrir la feuille. Essayez Safari ou Chrome.", made: "Créé avec Pocket Crew, un planificateur de course gratuit pour le trail et l’ultra.", getApp: "Obtenir Pocket Crew",
+        private: "Le plan n’existe que dans ce lien ; rien n’est stocké sur un serveur.", runner: "Coureur", bib: "dossard {b}" },
+  de: { arrivedWord: "angekommen", crewOnly: "Crew-Stationen", all: "Alle Stationen", stations: "Stationen", start: "Start", finish: "Ziel",
+        eta: "Ankunft", window: "Ankunft zwischen {a} und {b}", cutoff: "Cut-off {t}", margin: "{m} Puffer", crew: "Crew", bag: "Dropbag",
+        stop: "{m} Min. Stopp", next: "Nächste", arrived: "angekommen {t}", eat: "Hier essen", carry: "Mitnehmen", gear: "Ausrüstung", notes: "Notizen",
+        directions: "Anfahrt", bagItems: "Im Beutel", updated: "Aktualisiert {t}", ago: "vor {m} Min.", hAgo: "vor {h} Std. {m} Min.",
+        ahead: "{m} vor dem Plan", behind: "{m} hinter dem Plan", onPlan: "Im Plan", at: "Zuletzt bei {s}, {t}",
+        started: "Gestartet {t}", notStarted: "Geplanter Start {t}", finished: "Im Ziel nach {d}", dnf: "Rennen beendet",
+        stale: "Dieses Update ist schon älter. Bitte den Läufer um ein neues.", tz: "Zeiten in Rennzeit ({z}).",
+        shifted: "Die Zeiten unten sind an den Rennverlauf angepasst.", none: "Keine Crew-Stationen in diesem Plan; alle Stationen werden gezeigt.",
+        noData: "Diese Seite zeigt den Crew-Plan eines Läufers. Öffne den Link, den du bekommen hast.", bad: "Dieser Link ist unvollständig. Bitte den Läufer, ihn erneut zu senden.",
+        old: "Dieser Browser kann den Plan nicht öffnen. Versuche Safari oder Chrome.", made: "Erstellt mit Pocket Crew, einem kostenlosen Rennplaner für Trail- und Ultraläufer.", getApp: "Pocket Crew laden",
+        private: "Der Plan steckt nur in diesem Link; nichts wird auf einem Server gespeichert.", runner: "Läufer", bib: "Startnr. {b}" },
+  es: { arrivedWord: "llegó", crewOnly: "Puntos de asistencia", all: "Todos los puntos", stations: "Puntos", start: "Salida", finish: "Meta",
+        eta: "Llegada", window: "Llegada entre {a} y {b}", cutoff: "corte {t}", margin: "{m} de margen", crew: "Asistencia", bag: "Bolsa de vida",
+        stop: "parada {m} min", next: "Siguiente", arrived: "llegó {t}", eat: "Comer aquí", carry: "Llevar", gear: "Material", notes: "Notas",
+        directions: "Cómo llegar", bagItems: "En la bolsa", updated: "Actualizado {t}", ago: "hace {m} min", hAgo: "hace {h} h {m} min",
+        ahead: "{m} por delante del plan", behind: "{m} por detrás del plan", onPlan: "Según el plan", at: "Último paso: {s}, {t}",
+        started: "Salió {t}", notStarted: "Salida prevista {t}", finished: "Llegó a meta en {d}", dnf: "Se retiró",
+        stale: "Esta actualización es algo antigua. Pide una nueva al corredor.", tz: "Horas de la carrera ({z}).",
+        shifted: "Las horas de abajo se ajustan a cómo va la carrera.", none: "No hay puntos de asistencia en este plan; se muestran todos.",
+        noData: "Esta página muestra la hoja de asistencia de un corredor. Abre el enlace que te envió.", bad: "Este enlace está incompleto. Pide al corredor que lo envíe de nuevo.",
+        old: "Este navegador no puede abrir la hoja. Prueba Safari o Chrome.", made: "Hecho con Pocket Crew, un planificador gratuito para trail y ultra.", getApp: "Descargar Pocket Crew",
+        private: "El plan solo existe en este enlace; nada se guarda en un servidor.", runner: "Corredor", bib: "dorsal {b}" },
+  it: { arrivedWord: "arrivato", crewOnly: "Punti assistenza", all: "Tutti i punti", stations: "Punti", start: "Partenza", finish: "Arrivo",
+        eta: "Arrivo", window: "Arrivo tra {a} e {b}", cutoff: "cancello {t}", margin: "{m} di margine", crew: "Assistenza", bag: "Sacca",
+        stop: "sosta {m} min", next: "Prossimo", arrived: "arrivato {t}", eat: "Da mangiare qui", carry: "Da portare", gear: "Materiale", notes: "Note",
+        directions: "Come arrivare", bagItems: "Nella sacca", updated: "Aggiornato {t}", ago: "{m} min fa", hAgo: "{h} h {m} min fa",
+        ahead: "{m} in anticipo sul piano", behind: "{m} in ritardo sul piano", onPlan: "In linea col piano", at: "Ultimo passaggio: {s}, {t}",
+        started: "Partito {t}", notStarted: "Partenza prevista {t}", finished: "Arrivato in {d}", dnf: "Si è ritirato",
+        stale: "Questo aggiornamento è un po’ vecchio. Chiedine uno nuovo al corridore.", tz: "Orari di gara ({z}).",
+        shifted: "Gli orari qui sotto tengono conto dell’andamento della gara.", none: "Nessun punto assistenza in questo piano; mostro tutti i punti.",
+        noData: "Questa pagina mostra il foglio assistenza di un corridore. Apri il link che ti ha inviato.", bad: "Questo link è incompleto. Chiedi al corridore di rimandarlo.",
+        old: "Questo browser non può aprire il foglio. Prova Safari o Chrome.", made: "Creato con Pocket Crew, un pianificatore gratuito per trail e ultra.", getApp: "Scarica Pocket Crew",
+        private: "Il piano esiste solo in questo link; nulla è salvato su un server.", runner: "Corridore", bib: "pettorale {b}" }
+};
+let L = T.en, lang = "en";
+const fmt = (s, v) => s.replace(/\{(\w)\}/g, (_, k) => v[k]);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const app = document.getElementById("app");
+
+function pickLang(code) {
+  const nav = (navigator.language || "en").slice(0, 2);
+  lang = T[nav] ? nav : (T[code] ? code : "en");   // the reader's language first, then the runner's
+  L = T[lang]; document.documentElement.lang = lang;
+}
+
+async function decode(token) {
+  const b64 = token.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((token.length + 3) % 4);
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  return JSON.parse(await new Response(stream).text());
+}
+
+function render(p) {
+  pickLang(p.l);
+  const start = p.t * 1000, tz = p.tz;
+  const clockFmt = new Intl.DateTimeFormat(lang, { hour: "numeric", minute: "2-digit", timeZone: tz });
+  const dayFmt = new Intl.DateTimeFormat(lang, { year: "numeric", month: "numeric", day: "numeric", timeZone: tz });
+  const wdFmt = new Intl.DateTimeFormat(lang, { weekday: "short", timeZone: tz });
+  const at = m => new Date(start + m * 60000);
+  const clock = m => clockFmt.format(at(m));
+  // Show the weekday when a time falls on another day than the start (100-milers run overnight)
+  const startDay = dayFmt.format(new Date(start));
+  const clockDay = m => dayFmt.format(at(m)) === startDay ? clock(m) : wdFmt.format(at(m)) + " " + clock(m);
+  const mi = p.u === "mi";
+  const dist = km => mi ? (km / 1.609344).toFixed(1) + " mi" : km.toFixed(1) + " km";
+  const elev = m => mi ? Math.round(m * 3.28084).toLocaleString(lang) + " ft" : Math.round(m).toLocaleString(lang) + " m";
+  const dur = m => Math.floor(m / 60) + ":" + String(Math.round(m % 60)).padStart(2, "0");
+  const hm = m => (m >= 60 ? Math.floor(m / 60) + "h" + String(m % 60).padStart(2, "0") : m + " min");
+
+  const st = p.st;
+  const shift = st && typeof st.ah === "number" ? -st.ah : 0;   // ahead → earlier times
+  const stations = p.s || [];
+  const nextIdx = st ? stations.findIndex(s => s.x == null) : -1;
+  const hasCrew = stations.some(s => s.cr);
+  let crewOnly = hasCrew && localStorage_get("crewOnly") !== "0";
+
+  document.title = p.n + " · Crew Sheet";
+  let h = `<h1>${esc(p.n)}</h1><div class="meta">`;
+  const who = [p.r ? esc(p.r) : null, p.b ? esc(fmt(L.bib, { b: p.b })) : null].filter(Boolean).join(", ");
+  if (who) h += who + "<br>";
+  h += esc(new Intl.DateTimeFormat(lang, { weekday: "long", day: "numeric", month: "long", timeZone: tz }).format(new Date(start)));
+  h += ` · <span class="num">${clock(0)}</span>`;
+  if (p.km) h += ` · <span class="num">${dist(p.km)}</span>`;
+  if (p.up) h += ` · <span class="num">↑${elev(p.up)}</span>`;
+  h += "</div>";
+
+  if (st) {
+    const ageMin = Math.max(0, Math.round((Date.now() - st.at * 1000) / 60000));
+    const ago = ageMin < 60 ? fmt(L.ago, { m: ageMin }) : fmt(L.hAgo, { h: Math.floor(ageMin / 60), m: ageMin % 60 });
+    const last = [...stations].reverse().find(s => s.x != null);
+    let big, cls = "";
+    if (st.fin != null) big = fmt(L.finished, { d: dur(st.fin) });
+    else if (st.dnf) big = L.dnf;
+    else if (typeof st.ah === "number" && Math.abs(st.ah) >= 1) {
+      cls = st.ah > 0 ? "ahead" : "behind";
+      big = fmt(st.ah > 0 ? L.ahead : L.behind, { m: hm(Math.abs(st.ah)) });
+    } else if (typeof st.ah === "number") big = L.onPlan;
+    else big = fmt(L.started, { t: clock(0) });
+    h += `<div class="status"><div class="big ${cls}">${esc(big)}</div>`;
+    if (last) h += `<div class="sub">${esc(fmt(L.at, { s: last.f ? L.finish : last.n, t: clockDay(last.x) }))}</div>`;
+    h += `<div class="sub ${ageMin > 120 && st.fin == null && !st.dnf ? "stale" : ""}">${esc(fmt(L.updated, { t: clockFmt.format(new Date(st.at * 1000)) }))} · ${esc(ago)}</div>`;
+    if (ageMin > 120 && st.fin == null && !st.dnf) h += `<div class="sub stale">${esc(L.stale)}</div>`;
+    if (shift) h += `<div class="sub">${esc(L.shifted)}</div>`;
+    h += "</div>";
+  }
+
+  h += `<div class="bar"><h2>${esc(L.stations)}</h2>`;
+  if (hasCrew) h += `<button class="toggle" id="tg" aria-pressed="${crewOnly}">${esc(crewOnly ? L.crewOnly : L.all)}</button>`;
+  h += `</div>`;
+  if (!hasCrew && stations.length) h += `<p class="meta">${esc(L.none)}</p>`;
+
+  h += "<ol>";
+  stations.forEach((s, i) => {
+    if (crewOnly && !s.cr && !s.f && i !== nextIdx) return;
+    const done = s.x != null, isNext = i === nextIdx;
+    const eta = s.e != null ? s.e + (done ? 0 : shift) : null;
+    let right = "";
+    if (done) right = `<span class="when num">${clockDay(s.x)}</span>`;
+    else if (eta != null) right = `<span class="when num">${clockDay(eta)}</span>`;
+    h += `<li class="st${isNext ? " next" : ""}${done ? " done" : ""}"><div class="row"><span class="name">${esc(s.f ? (s.n || L.finish) : s.n)}</span>${right}</div>`;
+    let left = `<span class="num">${dist(s.k)}</span>`;
+    if (done) left += ` · ${esc(L.arrivedWord)}`;
+    let cut = "";
+    if (s.c != null && !done) {
+      const margin = eta != null && !done ? s.c - eta : null;
+      const tight = margin != null && margin < 30;
+      cut = `<span class="cut${tight ? " tight" : ""}">${esc(fmt(L.cutoff, { t: clockDay(s.c) }))}${margin != null ? " · " + esc(fmt(L.margin, { m: (margin < 0 ? "−" : "") + hm(Math.abs(margin)) })) : ""}</span>`;
+    }
+    h += `<div class="line2"><span>${left}</span>${cut}</div>`;
+    // Fast and slow plan times: when to be there by, and how long it might take
+    if (!done && s.a != null && s.z != null && s.a !== s.z)
+      h += `<div class="line2"><span>${esc(fmt(L.window, { a: clockDay(s.a + shift), b: clockDay(s.z + shift) }))}</span></div>`;
+    const tags = [];
+    if (isNext) tags.push(`<span class="tag next">${esc(L.next)}</span>`);
+    if (s.cr) tags.push(`<span class="tag">${esc(L.crew)}</span>`);
+    if (s.db) tags.push(`<span class="tag">${esc(L.bag)}</span>`);
+    if (s.st) tags.push(`<span class="tag">${esc(fmt(L.stop, { m: s.st }))}</span>`);
+    if (tags.length) h += `<div class="tags">${tags.join("")}</div>`;
+    const det = [];
+    if (s.db && s.db.length) det.push([L.bagItems, s.db.join(", ")]);
+    if (s.eat) det.push([L.eat, s.eat]);
+    if (s.car) det.push([L.carry, s.car]);
+    if (s.gr) det.push([L.gear, s.gr]);
+    if (s.no) det.push([L.notes, s.no]);
+    if (s.dir) det.push([L.directions, s.dir]);
+    if (det.length && !done) h += "<dl>" + det.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("") + "</dl>";
+    h += "</li>";
+  });
+  h += "</ol>";
+
+  const viewerTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  h += "<footer>";
+  if (tz && viewerTz !== tz) h += esc(fmt(L.tz, { z: tz.split("/").pop().replace(/_/g, " ") })) + "<br>";
+  h += esc(L.private) + "<br>" + esc(L.made) + ` <a href="${STORE}">${esc(L.getApp)}</a></footer>`;
+  app.innerHTML = h;
+
+  const tg = document.getElementById("tg");
+  if (tg) tg.onclick = () => { localStorage_set("crewOnly", crewOnly ? "0" : "1"); render(p); };
+}
+
+function localStorage_get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function localStorage_set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+function message(text, cta) {
+  app.innerHTML = `<h1>Pocket Crew</h1><p class="meta">${esc(text)}</p>` + (cta ? `<a class="cta" href="${STORE}">${esc(L.getApp)}</a>` : "");
+}
+
+async function load() {
+  pickLang();
+  const token = location.hash.slice(1);
+  if (!token) return message(L.noData, true);
+  if (typeof DecompressionStream === "undefined") return message(L.old, false);
+  try { render(await decode(token)); } catch (e) { message(L.bad, false); }
+}
+window.addEventListener("hashchange", load);
+load();
+// Keep the page for aid stations with no signal: a later visit opens from the cache
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
